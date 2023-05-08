@@ -1,0 +1,6 @@
+framework module frmBixolonUPOS {
+  umbrella header "frmBixolonUPOS.h"
+
+  export *
+  module * { export * }
+}
