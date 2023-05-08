@@ -1,4 +1,4 @@
-package com.example.bixolon_plugin
+package com.recycleledger.bixolon_plugin
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -164,6 +164,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun deviceEnableSetting(result: Result) {
+        printerInit()
         try {
             Log.d(TAG, "name : ${currentPrinter?.logicalName}")
             posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")

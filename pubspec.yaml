@@ -36,7 +36,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.example.bixolon_plugin
+        package: com.recycleledger.bixolon_plugin
         pluginClass: BixolonPlugin
       ios:
         pluginClass: BixolonPlugin

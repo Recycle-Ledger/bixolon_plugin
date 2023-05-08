@@ -1,4 +1,4 @@
-package com.example.bixolon_plugin_example
+package com.recycleledger.bixolon_plugin_example
 
 import io.flutter.embedding.android.FlutterActivity
 
