@@ -83,6 +83,15 @@ class BixolonPlugin {
     }
   }
 
+  Future<void> printPDF(String filePath) async {
+    debugPrint('$tag - printPDF');
+    try {
+      await platform.invokeMethod('printPDF', filePath);
+    } on PlatformException catch (error, stackTrace) {
+      return Future.error(error, stackTrace);
+    }
+  }
+
   // Singleton patten
   factory BixolonPlugin() {
     return _bixolonPlugin;

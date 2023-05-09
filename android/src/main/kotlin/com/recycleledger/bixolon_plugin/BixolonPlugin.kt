@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.NonNull
@@ -86,6 +87,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
             }
             "printText" -> printText(call.arguments as String, result)
             "printImage" -> printImage(call.arguments as ByteArray, result)
+            "printPDF" -> printPDF(call.arguments as String, result)
         }
     }
 
@@ -236,6 +238,29 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
             result.success(true)
         } catch (e: JposException) {
             Log.d(TAG, "error : ${e.toString()}")
+            result.error(e.errorCode.toString(), e.message, null)
+        }
+    }
+
+    private fun printPDF(filePath: String, result: Result) {
+        try {
+            val butter: ByteBuffer = ByteBuffer.allocate(4)
+            butter.put(POSPrinterConst.PTR_S_RECEIPT.toByte())
+            butter.put(80.toByte()) // brightness
+            butter.put(0x01) // compress
+            butter.put(0x00)
+
+            Log.d(TAG, "Uri : ${Uri.parse(filePath)}");
+
+            posPrinter?.printPDFFile(
+                butter.getInt(0),
+                Uri.parse(filePath),
+                posPrinter!!.recLineWidth,
+                POSPrinterConst.PTR_BM_LEFT,
+                1
+            )
+        } catch (e: JposException) {
+            android.util.Log.d(TAG, "error : ${e.toString()}")
             result.error(e.errorCode.toString(), e.message, null)
         }
     }

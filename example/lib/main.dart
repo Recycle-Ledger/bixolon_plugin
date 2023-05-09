@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bixolon_plugin/bixolon_plugin.dart';
 import 'package:bixolon_plugin/bluetooth_device.dart';
+import 'package:bixolon_plugin/escape_sequence.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:async';
@@ -37,7 +38,6 @@ class _MyAppState extends State<MyApp> {
 
     Future<Uint8List> widgetToByteArray() async {
       try {
-        print('inside');
         final boundary = key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
         if (boundary == null) {
           return Future.error('key error');
@@ -54,7 +54,6 @@ class _MyAppState extends State<MyApp> {
         return Future.error(e.toString());
       }
     }
-
 
     return MaterialApp(
       home: Scaffold(
@@ -125,7 +124,8 @@ class _MyAppState extends State<MyApp> {
                   ),
                   FilledButton(
                     onPressed: () async {
-                      BixolonPlugin().printText('text print\n서울 강남구 테헤란로 131, 15층\n(역삼동, 한국지식재산센터)\n02-1566-5701');
+                      final es = EscapeSequence();
+                      BixolonPlugin().printText('${es.center}=================\n${es.doubleHighAndWide}${es.scale2TimesHorizontally}서울 강남구\n${es.normal}(역삼동, 한국지식재산센터)\n02-1566-5701');
                     },
                     child: const Text('text print'),
                   ),
@@ -142,13 +142,26 @@ class _MyAppState extends State<MyApp> {
                 key: key,
                 child: Container(
                   color: Colors.white,
+                  child: Text(
+                    'text print\n서울 강남구 테헤란로 131, 15층\n(역삼동, 한국지식재산센터)\n02-1566-5701',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              /* RepaintBoundary(
+                key: key,
+                child: Container(
+                  color: Colors.white,
                   child: Image.asset(
                     'assets/test.png',
                     height: 300,
                     fit: BoxFit.cover,
                   ),
                 ),
-              ),
+              ),*/
               if (pairedDeviceList.isNotEmpty)
                 Expanded(
                   child: ListView.builder(
