@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bixolon_plugin/bixolon_plugin.dart';
 import 'package:bixolon_plugin/bluetooth_device.dart';
 import 'package:bixolon_plugin/escape_sequence.dart';
+import 'package:bixolon_plugin/common_symbol.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:async';
@@ -125,7 +126,26 @@ class _MyAppState extends State<MyApp> {
                   FilledButton(
                     onPressed: () async {
                       final es = EscapeSequence();
-                      BixolonPlugin().printText('${es.center}=================\n${es.doubleHighAndWide}${es.scale2TimesHorizontally}서울 강남구\n${es.normal}(역삼동, 한국지식재산센터)\n02-1566-5701');
+                        BixolonPlugin().printText('${es.normal}\n');
+                        BixolonPlugin().printText('${es.doubleHighAndWide}${es.bold}${es.center}수집 확인서\n\n\n');
+                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('대    상 :', '폐식용유')}\n');
+                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('수    량 :', '20 캔')}\n');
+                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('금    액 :', '675,000 원')}\n\n\n');
+                        BixolonPlugin().printText('${es.normal}${es.center}상기 폐식용유를 수집하였음\n');
+                        BixolonPlugin().printText('${es.normal}${es.center}2023년 5월 3일\n\n');
+                        BixolonPlugin().printText('${es.normal}${CommonSymbol.stroke}\n\n');
+                        BixolonPlugin().printText('${es.normal}${es.doubleWide}배출처\n');
+                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('상    호 :', '까치울초')}\n');
+                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('담 당 자 :', '김까치')}\n\n');
+                        BixolonPlugin().printText('${es.normal}${es.doubleWide}수집처\n');
+                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('상    호 :', '(주) 에코그린')}\n');
+                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('대표이사 :', '서 성 희')}\n');
+                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('주    소 :', '군포시 당정로 83')}\n');
+                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('담 당 자 :', '정 재 우')}\n');
+                        BixolonPlugin().printText('${es.normal}\n\n');
+                        BixolonPlugin().printText('${es.normal}${es.doubleWide}서명\n\n');
+                        BixolonPlugin().printImage(await widgetToByteArray());
+                        BixolonPlugin().printText('${es.normal}\n\n');
                     },
                     child: const Text('text print'),
                   ),
@@ -138,20 +158,7 @@ class _MyAppState extends State<MyApp> {
                 ],
               ),
               const SizedBox(height: 10),
-              RepaintBoundary(
-                key: key,
-                child: Container(
-                  color: Colors.white,
-                  child: Text(
-                    'text print\n서울 강남구 테헤란로 131, 15층\n(역삼동, 한국지식재산센터)\n02-1566-5701',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              /* RepaintBoundary(
+               RepaintBoundary(
                 key: key,
                 child: Container(
                   color: Colors.white,
@@ -161,7 +168,7 @@ class _MyAppState extends State<MyApp> {
                     fit: BoxFit.cover,
                   ),
                 ),
-              ),*/
+              ),
               if (pairedDeviceList.isNotEmpty)
                 Expanded(
                   child: ListView.builder(

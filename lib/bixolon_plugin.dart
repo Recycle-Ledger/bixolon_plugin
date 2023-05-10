@@ -68,7 +68,7 @@ class BixolonPlugin {
   Future<void> printText(String text) async {
     debugPrint('$tag - printText');
     try {
-      await platform.invokeMethod('printText', '\n\n $text \n\n\n\n\n');
+      await platform.invokeMethod('printText', '$text');
     } on PlatformException catch (error, stackTrace) {
       return Future.error(error, stackTrace);
     }
