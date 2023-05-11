@@ -10,11 +10,19 @@ class BixolonPlugin {
   static const tag = 'bixolon_plugin';
   final platform = const MethodChannel('bixolon_plugin');
 
-  // SDK를 사용하기 위한 기본 세팅으로 최초 실행시 혹은 dispose 이후에 재사용시 필수 호출
   Future<void> init() async {
     debugPrint('$tag - init');
     try {
       final result = await platform.invokeMethod('init');
+    } catch (error, stackTrace) {
+      return Future.error(error, stackTrace);
+    }
+  }
+
+  Future<void> dispose() async {
+    debugPrint('$tag - dispose');
+    try {
+      final result = await platform.invokeMethod('dispose');
     } catch (error, stackTrace) {
       return Future.error(error, stackTrace);
     }
