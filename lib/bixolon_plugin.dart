@@ -37,10 +37,9 @@ class BixolonPlugin {
   }
 
   Future<List<BluetoothDevice>> getPairedDevices() async {
+    debugPrint('$tag - getPairedDevices');
     String devicesJson = await platform.invokeMethod('pairedDevices');
-    print("@@@ deviceList : ${devicesJson.toString()}");
     List jsonList = jsonDecode(devicesJson) as List;
-    print("@@@ deviceList : ${jsonList.toString()}");
     return jsonList.map((e) => BluetoothDevice.fromMap(e)).toList();
   }
 
@@ -49,6 +48,7 @@ class BixolonPlugin {
   }
 
   Future<void> selectPrinter(String macAddress) async {
+    debugPrint('$tag - selectPrinter : $macAddress');
     try {
       await platform.invokeMethod('connectPrinter', macAddress);
     } on PlatformException catch (error, stackTrace) {
@@ -57,6 +57,7 @@ class BixolonPlugin {
   }
 
   Future<BluetoothDevice?> getCurrentPrinter() async {
+    debugPrint('$tag - getCurrentPrinter');
     String? deviceJson = await platform.invokeMethod('currentPrinter');
     if (deviceJson == null) {
        return null;

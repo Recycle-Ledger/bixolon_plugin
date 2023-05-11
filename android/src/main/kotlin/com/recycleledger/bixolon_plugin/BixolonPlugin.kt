@@ -158,15 +158,11 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun printerInit() {
         Log.d(TAG, "print init")
-        posPrinter?.release()
-        posPrinter?.close()
-        posPrinter?.deviceEnabled = false
         posPrinter = POSPrinter(context)
         addListener()
     }
 
     private fun deviceEnableSetting(result: Result) {
-        printerInit()
         try {
             Log.d(TAG, "name : ${currentPrinter?.logicalName}")
             posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")
