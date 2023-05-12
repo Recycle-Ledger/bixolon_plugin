@@ -34,7 +34,6 @@ import java.nio.ByteBuffer
 
 /** BixolonPlugin */
 class BixolonPlugin : FlutterPlugin, MethodCallHandler {
-    private val TAG = "@@@ bixolon_plugin"
     private val CHANNEL = "bixolon_plugin"
 
     private lateinit var channel: MethodChannel
@@ -52,14 +51,14 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
     val msr: MSR = MSR()
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "bixolon_plugin")
         channel.setMethodCallHandler(this)
         context = flutterPluginBinding.applicationContext
         bluetoothAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
     }
 
-    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+    override fun onMethodCall(call: MethodCall, result: Result) {
         when (call.method) {
             "init" -> {
                 printerInit()
@@ -91,7 +90,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
     }
 
@@ -105,8 +104,6 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
                     device.address,
                 )
             )
-            Log.d(TAG, "name : ${device.name}")
-            Log.d(TAG, "name : ${device.address}")
         }
         result.success(gson.toJson(pairedDeviceList))
     }
@@ -114,7 +111,6 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
     private fun connectPrinter(macAddress: String, result: Result) {
         val selectDevice = pairedDeviceList.find { it.macAddress == macAddress }
         if (selectDevice == null) {
-            Log.d(TAG, " selectDevice null")
             result.error("0", "Not found device", null)
             return
         }
@@ -143,7 +139,6 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
             bxlConfigLoader?.openFile()
             result.success(true)
             for (entry in bxlConfigLoader!!.entries) {
-                Log.d(TAG, "apply entry : ${entry.logicalName}")
                 val logicalName = entry.logicalName
                 currentPrinter = BluetoothData(
                     logicalName,
@@ -151,20 +146,17 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
                 )
             }
         } catch (e: JposException) {
-            Log.d(TAG, "not connect device")
             result.success(false)
         }
     }
 
     private fun printerInit() {
-        Log.d(TAG, "print init")
         posPrinter = POSPrinter(context)
         addListener()
     }
 
     private fun deviceEnableSetting(result: Result) {
         try {
-            Log.d(TAG, "name : ${currentPrinter?.logicalName}")
             posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")
             // Device 정보에 포함 되어 있는 Port를 실제로 Open 하는 작업
             posPrinter?.claim(5000)
@@ -183,7 +175,6 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun printText(text: String, result: Result) {
-        Log.d(TAG, "printText : $text")
         try {
             posPrinter?.printNormal(
                 POSPrinterConst.PTR_S_RECEIPT, // 고정값
@@ -191,7 +182,6 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
             )
             result.success(true)
         } catch (e: JposException) {
-            Log.d(TAG, "error : ${e.toString()}")
             result.error(e.errorCode.toString(), e.message, null)
         }
     }
@@ -233,7 +223,6 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
             )
             result.success(true)
         } catch (e: JposException) {
-            Log.d(TAG, "error : ${e.toString()}")
             result.error(e.errorCode.toString(), e.message, null)
         }
     }
@@ -246,8 +235,6 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
             butter.put(0x01) // compress
             butter.put(0x00)
 
-            Log.d(TAG, "Uri : ${Uri.parse(filePath)}");
-
             posPrinter?.printPDFFile(
                 butter.getInt(0),
                 Uri.parse(filePath),
@@ -256,7 +243,6 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
                 1
             )
         } catch (e: JposException) {
-            android.util.Log.d(TAG, "error : ${e.toString()}")
             result.error(e.errorCode.toString(), e.message, null)
         }
     }
@@ -265,7 +251,6 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
         if (bxlConfigLoader == null) {
             bxlConfigLoader = BXLConfigLoader(context)
         }
-        Log.d(TAG,"@@@ unregisterPrinter")
         bxlConfigLoader?.removeAllEntries()
         bxlConfigLoader?.saveFile()
     }
@@ -279,7 +264,6 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
                     JposConst.JPOS_SUE_POWER_OFF_OFFLINE -> "Power off"
                     else -> "Unknown"
                 }
-                Log.d(TAG, "error : ${error?.errorCode}")
             }
             addStatusUpdateListener { update: StatusUpdateEvent ->
                 val statusMsg = when (update.status) {
@@ -295,7 +279,6 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
                     POSPrinterConst.PTR_SUE_BAT_OK -> "Battery_OK"
                     else -> "Unknown"
                 }
-                Log.d(TAG, "status : $statusMsg")
             }
             // 프린트 완료
             addOutputCompleteListener { complete: OutputCompleteEvent ->
@@ -308,9 +291,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
                 var strData: String = String(msr.track1Data)
                 strData += String(msr.track2Data)
                 strData += String(msr.track3Data)
-                Log.d(TAG, "msr : $strData")
             } catch (e: JposException) {
-                Log.d(TAG, "e : $e")
             }
         }
     }
