@@ -13,7 +13,8 @@ class BixolonPlugin {
   Future<void> init() async {
     debugPrint('$tag - init');
     try {
-      final result = await platform.invokeMethod('init');
+      await platform.invokeMethod('init');
+      return;
     } catch (error, stackTrace) {
       return Future.error(error, stackTrace);
     }
@@ -22,28 +23,29 @@ class BixolonPlugin {
   Future<void> dispose() async {
     debugPrint('$tag - dispose');
     try {
-      final result = await platform.invokeMethod('dispose');
+      await platform.invokeMethod('dispose');
+      return;
     } catch (error, stackTrace) {
       return Future.error(error, stackTrace);
     }
   }
   
-  // 사전에 등록된 디바이스가 있는지 체크함. 디바이스가 없을 경우 스캔목록을 가져와서 최초 등록을 해주어야 한다.
+  /// 사전에 등록된 디바이스가 있는지 체크함. 등록된 디바이스가 없을 경우 스캔목록을 가져와서 최초 등록을 해주어야 한다.
   Future<bool> checkConnection() async {
       bool exist = await platform.invokeMethod('checkConnection');
     return exist;
   }
   
-  // 페어링된 디바이스를 사용할 수 있도록 사전 설정을 준비한다.
+  /// 페어링된 디바이스를 사용할 수 있도록 사전 설정을 준비한다.
   Future<void> deviceEnableSetting() async {
     try {
       await platform.invokeMethod('deviceEnableSetting');
     } on PlatformException catch (error, stackTrace) {
-      print("@@@ error : ${error.message}");
       return Future.error(error.message.toString(), stackTrace);
     }
   }
 
+  /// 페어링 되어있는 기기목록을 가져옴
   Future<List<BluetoothDevice>> getPairedDevices() async {
     debugPrint('$tag - getPairedDevices');
     String devicesJson = await platform.invokeMethod('pairedDevices');
@@ -55,6 +57,7 @@ class BixolonPlugin {
     platform.invokeMethod('unregisterPrinter');
   }
 
+  /// 스캔한 프린터를 사용하도록 설정
   Future<void> selectPrinter(String macAddress) async {
     debugPrint('$tag - selectPrinter : $macAddress');
     try {
@@ -64,6 +67,7 @@ class BixolonPlugin {
     }
   }
 
+  /// 현재 연결된 프린터의 정보
   Future<BluetoothDevice?> getCurrentPrinter() async {
     debugPrint('$tag - getCurrentPrinter');
     String? deviceJson = await platform.invokeMethod('currentPrinter');

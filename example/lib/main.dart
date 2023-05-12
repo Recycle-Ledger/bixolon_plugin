@@ -106,7 +106,6 @@ class _MyAppState extends State<MyApp> {
                           stateText = '프린트 준비가 완료되었습니다.';
                         });
                       } catch (error, stackTrace) {
-                        print("@@@ catch error : ${error.toString()}");
                         setState(() {
                           stateText = '등록된 기기와의 연결에 실패했습니다. 기기 확인 후 다시 연결해주세요. error : ${error.toString()}';
                         });
@@ -154,6 +153,12 @@ class _MyAppState extends State<MyApp> {
                       BixolonPlugin().printImage(await widgetToByteArray());
                     },
                     child: const Text('png print'),
+                  ),
+                  FilledButton(
+                    onPressed: () async {
+                      BixolonPlugin().dispose();
+                    },
+                    child: const Text('dispose'),
                   ),
                 ],
               ),
