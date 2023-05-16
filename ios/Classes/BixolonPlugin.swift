@@ -60,7 +60,5 @@ public class BixolonPlugin: NSObject, FlutterPlugin, UPOSDeviceControlDelegate {
     }
     
     private func printText() {
-    
-        printerController?.printNormal(, data: "test print")
     }
 }
