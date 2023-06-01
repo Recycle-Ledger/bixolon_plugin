@@ -60,32 +60,31 @@ public class BixolonPlugin: NSObject, FlutterPlugin, UPOSDeviceControlDelegate {
   }
     
     private func printerInit() {
+        print("@@@@ 1")
+        let printerController = UPOSPrinterController()
         
         print("@@@@ 2")
         printerList = UPOSPrinters()
         
-        print("@@@@ 1")
-        printerController = UPOSPrinterController()
-        
-        if let printerCon = printerController {
-            print("@@@@ 3")
-            registerNotiLookupBT()
-            printerCon.setLogLevel(UInt8(LOG_SHOW_ALL))
-            printerCon.setCharacterSet(5601)
-            printerCon.delegate = self
-            printerCon.refreshBTLookup()
-            print("@@@@ 4")
-        }
-        
-        if let rawList = printerList?.getList() as? [Any] {
-            let device = rawList.compactMap{ $0 as? UPOSPrinter }.first
-            printerController?.open(device?.modelName)
-        } else {
-
-        }
-        print("@@@@ 5")
-        printerController?.claim(5000)
-        printerController?.deviceEnabled = true
+//        if let printerCon = printerController {
+//            print("@@@@ 3")
+//            registerNotiLookupBT()
+//            printerCon.setLogLevel(UInt8(LOG_SHOW_ALL))
+//            printerCon.setCharacterSet(5601)
+//            printerCon.delegate = self
+//            printerCon.refreshBTLookup()
+//            print("@@@@ 4")
+//        }
+//        
+//        if let rawList = printerList?.getList() as? [Any] {
+//            let device = rawList.compactMap{ $0 as? UPOSPrinter }.first
+//            printerController?.open(device?.modelName)
+//        } else {
+//
+//        }
+//        print("@@@@ 5")
+//        printerController?.claim(5000)
+//        printerController?.deviceEnabled = true
     }
     
     private func dispose() {
