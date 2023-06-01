@@ -23,4 +23,5 @@ A new Flutter project.
   s.preserve_paths = 'frmBixolonUPOS.framework'
   s.xcconfig = { 'OTHER_LDFLAGS' => '-framework frmBixolonUPOS' }
   s.vendored_frameworks = 'frmBixolonUPOS.framework'
+  s.public_header_files = 'frmBixolonUPOS.framework/Headers/*.h'
 end

@@ -88,18 +88,6 @@ class _MyAppState extends State<MyApp> {
                   ),
                   FilledButton(
                     onPressed: () async {
-                      bool needDevice = await BixolonPlugin().checkConnection();
-                      if (needDevice) {
-                      } else {
-                        setState(() {
-                          stateText = '등록된 기기가 없습니다. 기기 스캔이 필요합니다.';
-                        });
-                      }
-                    },
-                    child: const Text('search'),
-                  ),
-                  FilledButton(
-                    onPressed: () async {
                       try {
                         await BixolonPlugin().deviceEnableSetting();
                         setState(() {

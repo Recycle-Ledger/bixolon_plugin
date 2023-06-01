@@ -53,10 +53,6 @@ class BixolonPlugin {
     return jsonList.map((e) => BluetoothDevice.fromMap(e)).toList();
   }
 
-  void unregisterPrinter() {
-    platform.invokeMethod('unregisterPrinter');
-  }
-
   /// 스캔한 프린터를 사용하도록 설정
   Future<void> selectPrinter(String macAddress) async {
     debugPrint('$tag - selectPrinter : $macAddress');

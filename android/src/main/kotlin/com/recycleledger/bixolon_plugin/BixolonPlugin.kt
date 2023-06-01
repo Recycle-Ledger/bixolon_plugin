@@ -80,10 +80,6 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
                     result.success(gson.toJson(currentPrinter))
                 }
             }
-            "unregisterPrinter" -> {
-                unregisterPrinter()
-                result.success(0)
-            }
             "printText" -> printText(call.arguments as String, result)
             "printImage" -> printImage(call.arguments as ByteArray, result)
             "printPDF" -> printPDF(call.arguments as String, result)
@@ -245,14 +241,6 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
         } catch (e: JposException) {
             result.error(e.errorCode.toString(), e.message, null)
         }
-    }
-
-    private fun unregisterPrinter() {
-        if (bxlConfigLoader == null) {
-            bxlConfigLoader = BXLConfigLoader(context)
-        }
-        bxlConfigLoader?.removeAllEntries()
-        bxlConfigLoader?.saveFile()
     }
 
     private fun addListener() {

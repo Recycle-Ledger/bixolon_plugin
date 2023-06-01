@@ -47,5 +47,21 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+            <!--for connecting to devices (client)-->
+            <string>bluetooth-central</string>
+
+            <!--for server configurations if needed-->
+            <string>bluetooth-peripheral</string>
+        </array>
+        <key>UISupportedExternalAccessoryProtocols</key>
+         	<array>
+         		<string>com.bixolon.protocol</string>
+         	</array>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>블루투스 사용이 필요합니다.</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>bluetooth Description</string>
 </dict>
 </plist>
