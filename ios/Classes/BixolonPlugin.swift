@@ -60,11 +60,12 @@ public class BixolonPlugin: NSObject, FlutterPlugin, UPOSDeviceControlDelegate {
   }
     
     private func printerInit() {
-        print("@@@@ 1")
-        printerController = UPOSPrinterController()
         
         print("@@@@ 2")
         printerList = UPOSPrinters()
+        
+        print("@@@@ 1")
+        printerController = UPOSPrinterController()
         
         if let printerCon = printerController {
             print("@@@@ 3")
