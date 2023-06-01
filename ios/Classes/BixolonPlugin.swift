@@ -24,7 +24,6 @@ public class BixolonPlugin: NSObject, FlutterPlugin, UPOSDeviceControlDelegate {
       switch (call.method) {
       case "init":
           printerInit()
-          result(true)
           break
       case "checkConnection":
           result(true)
@@ -75,7 +74,7 @@ public class BixolonPlugin: NSObject, FlutterPlugin, UPOSDeviceControlDelegate {
 //            printerCon.refreshBTLookup()
 //            print("@@@@ 4")
 //        }
-//        
+//
 //        if let rawList = printerList?.getList() as? [Any] {
 //            let device = rawList.compactMap{ $0 as? UPOSPrinter }.first
 //            printerController?.open(device?.modelName)
