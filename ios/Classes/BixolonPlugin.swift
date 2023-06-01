@@ -24,7 +24,7 @@ public class BixolonPlugin: NSObject, FlutterPlugin, UPOSDeviceControlDelegate {
       switch (call.method) {
       case "init":
           printerInit()
-          result(nil)
+          result(true)
           break
       case "checkConnection":
           result(true)
