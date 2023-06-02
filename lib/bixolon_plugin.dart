@@ -15,7 +15,7 @@ class BixolonPlugin {
     try {
       await platform.invokeMethod('init');
       return;
-    } catch (error, stackTrace) {
+    } on PlatformException catch (error, stackTrace) {
       return Future.error(error, stackTrace);
     }
   }

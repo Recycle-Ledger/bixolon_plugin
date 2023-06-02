@@ -20,26 +20,25 @@ public class BixolonPlugin: NSObject, FlutterPlugin, UPOSDeviceControlDelegate {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    result("iOS " + UIDevice.current.systemVersion)
       switch (call.method) {
       case "init":
-          printerInit()
+          printerInit(result: result)
           break
       case "checkConnection":
-          result(true)
+          result(nil)
           break
       case "deviceEnableSetting":
-          result(true)
+          result(nil)
           break
       case "dispose":
           dispose()
-          result(true)
+          result(nil)
           break
       case "pairedDevices":
           scanPairedDevices(result: result)
           break
       case "connectPrinter":
-          connectPrinter(deviceName: call.arguments as! String)
+          connectPrinter(deviceName: call.arguments as! String, result: result)
           break
       case "currentPrinter":
           result(true)
@@ -54,11 +53,12 @@ public class BixolonPlugin: NSObject, FlutterPlugin, UPOSDeviceControlDelegate {
           printPDF(filePath: call.arguments as! String, result: result)
           break
       default:
+          result(FlutterMethodNotImplemented)
           return
       }
   }
     
-    private func printerInit() {
+    private func printerInit(result: @escaping FlutterResult) {
         printerController = UPOSPrinterController()
         printerList = UPOSPrinters()
         
@@ -70,14 +70,22 @@ public class BixolonPlugin: NSObject, FlutterPlugin, UPOSDeviceControlDelegate {
             printerCon.refreshBTLookup()
         }
 
-        if let rawList = printerList?.getList() as? [Any] {
-            let device = rawList.compactMap{ $0 as? UPOSPrinter }.first
-            printerController?.open(device?.modelName)
-        } else {
-
-        }
-        printerController?.claim(5000)
-        printerController?.deviceEnabled = true
+//        if let rawList = printerList?.getList() as? [Any] {
+//            print("list : \(rawList.count)")
+//            if (rawList.isEmpty) {
+//                result(FlutterError())
+//                return
+//            }
+//            let device = rawList.compactMap{ $0 as? UPOSPrinter }.first
+//            printerController?.open(device?.modelName)
+//        } else {
+//            print("else")
+//            result(FlutterError())
+//            return
+//        }
+//        printerController?.claim(5000)
+//        printerController?.deviceEnabled = true
+//        result(nil)
     }
     
     private func dispose() {
@@ -96,41 +104,40 @@ public class BixolonPlugin: NSObject, FlutterPlugin, UPOSDeviceControlDelegate {
         }
     }
 
-    private func connectPrinter(deviceName: String) {
+    private func connectPrinter(deviceName: String, result: FlutterResult) {
         printerController?.refreshBTLookup()
         if let rawList = printerList?.getList() as? [Any] {
             let deviceList = rawList.compactMap{ $0 as? UPOSPrinter }
             if let device = deviceList.first(where: {$0.modelName == deviceName}) {
                 printerController?.open(deviceName)
             } else {
-
+                result(FlutterError())
             }
         } else {
-
+            result(FlutterError())
         }
         printerController?.claim(5000)
         printerController?.deviceEnabled = true
+        result(FlutterError())
     }
     
     private func printText(text: String, result: FlutterResult) {
         printerController?.printNormal(Int(__UPOS_PRINTER_STATION.PTR_S_RECEIPT.rawValue), data: text)
+        result(nil)
     }
     
     private func printImage(byteArray: FlutterStandardTypedData, result: FlutterResult) {
-        do {
-            let byte = [UInt8](byteArray.data)
-            let data = Data(byte)
-            print("byte : \(byte)")
-            let image = UIImage(data: data)!
-            printerController?.printBitmap(Int(__UPOS_PRINTER_STATION.PTR_S_RECEIPT.rawValue), image: image, width: printerController!.recLineWidth, alignment: -3)
-            result(true)
-        } catch let error {
-            result(error)
-        }
+        let byte = [UInt8](byteArray.data)
+        let data = Data(byte)
+        print("byte : \(byte)")
+        let image = UIImage(data: data)!
+        printerController?.printBitmap(Int(__UPOS_PRINTER_STATION.PTR_S_RECEIPT.rawValue), image: image, width: printerController!.recLineWidth, alignment: -3)
+        result(nil)
     }
     
     private func printPDF(filePath: String, result: FlutterResult) {
         printerController?.printPDF(Int(__UPOS_PRINTER_STATION.PTR_S_RECEIPT.rawValue), fileName: filePath, page: 1)
+        result(nil)
     }
      
     func registerNotiLookupBT(){

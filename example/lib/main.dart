@@ -82,7 +82,10 @@ class _MyAppState extends State<MyApp> {
                 children: [
                   FilledButton(
                     onPressed: () async {
-                      BixolonPlugin().init();
+                      try {
+                        BixolonPlugin().init();
+                      } catch (error, stackTrace) {
+                      }
                     },
                     child: const Text('init'),
                   ),
@@ -181,7 +184,11 @@ class _MyAppState extends State<MyApp> {
                           ),
                         ),
                         onTap: () async {
-                          BixolonPlugin().selectPrinter(pairedDeviceList[index].macAddress);
+                          if (Platform.isAndroid) {
+                            BixolonPlugin().selectPrinter(pairedDeviceList[index].macAddress);
+                          } else {
+                            BixolonPlugin().selectPrinter(pairedDeviceList[index].logicalName);
+                          }
                         },
                       );
                     },
