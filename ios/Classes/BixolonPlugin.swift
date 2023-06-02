@@ -119,7 +119,7 @@ public class BixolonPlugin: NSObject, FlutterPlugin, UPOSDeviceControlDelegate {
         }
         printerController?.claim(5000)
         printerController?.deviceEnabled = true
-        result(FlutterError())
+        result(nil)
     }
     
     private func printText(text: String, result: FlutterResult) {
