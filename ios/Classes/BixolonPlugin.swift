@@ -59,20 +59,15 @@ public class BixolonPlugin: NSObject, FlutterPlugin, UPOSDeviceControlDelegate {
   }
     
     private func printerInit() {
-        print("@@@@ 1")
         printerController = UPOSPrinterController()
-        
-        print("@@@@ 2")
         printerList = UPOSPrinters()
         
         if let printerCon = printerController {
-            print("@@@@ 3")
             registerNotiLookupBT()
-            printerCon.setLogLevel(UInt8(LOG_SHOW_ALL))
+            printerCon.setLogLevel(UInt8(LOG_SHOW_NORMAL))
             printerCon.setCharacterSet(5601)
             printerCon.delegate = self
             printerCon.refreshBTLookup()
-            print("@@@@ 4")
         }
 
         if let rawList = printerList?.getList() as? [Any] {
@@ -81,7 +76,6 @@ public class BixolonPlugin: NSObject, FlutterPlugin, UPOSDeviceControlDelegate {
         } else {
 
         }
-        print("@@@@ 5")
         printerController?.claim(5000)
         printerController?.deviceEnabled = true
     }
