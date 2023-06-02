@@ -69,6 +69,7 @@ public class BixolonPlugin: NSObject, FlutterPlugin, UPOSDeviceControlDelegate {
             printerCon.delegate = self
             printerCon.refreshBTLookup()
         }
+        result(nil)
 
 //        if let rawList = printerList?.getList() as? [Any] {
 //            print("list : \(rawList.count)")
