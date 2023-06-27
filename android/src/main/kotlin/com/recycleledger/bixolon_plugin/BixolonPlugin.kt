@@ -233,10 +233,10 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
 
             posPrinter?.printPDFFile(
                 butter.getInt(0),
-                Uri.parse(filePath),
+                Uri.parse("file://$filePath"),
                 posPrinter!!.recLineWidth,
                 POSPrinterConst.PTR_BM_LEFT,
-                1
+                1, 1,
             )
         } catch (e: JposException) {
             result.error(e.errorCode.toString(), e.message, null)

@@ -4,12 +4,17 @@ import 'package:bixolon_plugin/bixolon_plugin.dart';
 import 'package:bixolon_plugin/bluetooth_device.dart';
 import 'package:bixolon_plugin/escape_sequence.dart';
 import 'package:bixolon_plugin/common_symbol.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/services.dart';
+import 'package:pdf_render/pdf_render_widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void main() {
@@ -26,6 +31,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   List<BluetoothDevice> pairedDeviceList = [];
   String stateText = 'ready';
+  String pdfPath = '';
 
   @override
   void initState() {
@@ -84,8 +90,7 @@ class _MyAppState extends State<MyApp> {
                     onPressed: () async {
                       try {
                         BixolonPlugin().init();
-                      } catch (error, stackTrace) {
-                      }
+                      } catch (error, stackTrace) {}
                     },
                     child: const Text('init'),
                   ),
@@ -116,26 +121,26 @@ class _MyAppState extends State<MyApp> {
                   FilledButton(
                     onPressed: () async {
                       final es = EscapeSequence();
-                        BixolonPlugin().printText('${es.normal}\n');
-                        BixolonPlugin().printText('${es.doubleHighAndWide}${es.bold}${es.center}수집 확인서\n\n\n');
-                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('대    상 :', '폐식용유')}\n');
-                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('수    량 :', '20 캔')}\n');
-                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('금    액 :', '675,000 원')}\n\n\n');
-                        BixolonPlugin().printText('${es.normal}${es.center}상기 폐식용유를 수집하였음\n');
-                        BixolonPlugin().printText('${es.normal}${es.center}2023년 5월 3일\n\n');
-                        BixolonPlugin().printText('${es.normal}${CommonSymbol.stroke}\n\n');
-                        BixolonPlugin().printText('${es.normal}${es.doubleWide}배출처\n');
-                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('상    호 :', '까치울초')}\n');
-                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('담 당 자 :', '김까치')}\n\n');
-                        BixolonPlugin().printText('${es.normal}${es.doubleWide}수집처\n');
-                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('상    호 :', '(주) 에코그린')}\n');
-                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('대표이사 :', '서 성 희')}\n');
-                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('주    소 :', '군포시 당정로 83')}\n');
-                        BixolonPlugin().printText('${es.normal}${es.spaceBetween('담 당 자 :', '정 재 우')}\n');
-                        BixolonPlugin().printText('${es.normal}\n\n');
-                        BixolonPlugin().printText('${es.normal}${es.doubleWide}서명\n\n');
-                        BixolonPlugin().printImage(await widgetToByteArray());
-                        BixolonPlugin().printText('${es.normal}\n\n');
+                      BixolonPlugin().printText('${es.normal}\n');
+                      BixolonPlugin().printText('${es.doubleHighAndWide}${es.bold}${es.center}수집 확인서\n\n\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('대    상 :', '폐식용유')}\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('수    량 :', '20 캔')}\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('금    액 :', '675,000 원')}\n\n\n');
+                      BixolonPlugin().printText('${es.normal}${es.center}상기 폐식용유를 수집하였음\n');
+                      BixolonPlugin().printText('${es.normal}${es.center}2023년 5월 3일\n\n');
+                      BixolonPlugin().printText('${es.normal}${CommonSymbol.stroke}\n\n');
+                      BixolonPlugin().printText('${es.normal}${es.doubleWide}배출처\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('상    호 :', '까치울초')}\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('담 당 자 :', '김까치')}\n\n');
+                      BixolonPlugin().printText('${es.normal}${es.doubleWide}수집처\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('상    호 :', '(주) 에코그린')}\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('대표이사 :', '서 성 희')}\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('주    소 :', '군포시 당정로 83')}\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('담 당 자 :', '정 재 우')}\n');
+                      BixolonPlugin().printText('${es.normal}\n\n');
+                      BixolonPlugin().printText('${es.normal}${es.doubleWide}서명\n\n');
+                      BixolonPlugin().printImage(await widgetToByteArray());
+                      BixolonPlugin().printText('${es.normal}\n\n');
                     },
                     child: const Text('text print'),
                   ),
@@ -147,6 +152,80 @@ class _MyAppState extends State<MyApp> {
                   ),
                   FilledButton(
                     onPressed: () async {
+                      final List<List<String>> dataTable = [
+                        ['1', 'abc', '30'],
+                        ['2', '개발자', '10'],
+                        ['3', '테스트', '20'],
+                      ];
+                      final pdf = pw.Document();
+                      final fontBase = await rootBundle.load('assets/fonts/PretendardVariable.ttf');
+                      pdf.addPage(
+                        pw.Page(
+                          pageTheme: pw.PageTheme(
+                              pageFormat: PdfPageFormat(
+                              57 * PdfPageFormat.mm,
+                              double.infinity,
+                              marginAll: 2.5 * PdfPageFormat.mm,
+                            ),
+                              theme: pw.ThemeData.withFont(
+                                base: pw.Font.ttf(fontBase),
+                              )),
+                          build: (pw.Context context) {
+                            return pw.TableHelper.fromTextArray(
+                              border: pw.TableBorder.all(
+                                width: 0.1,
+                              ),
+                              headers: ['번호', '이름', '나이'],
+                              data: List<List<dynamic>>.generate(
+                                dataTable.length,
+                                (index) => <dynamic>[
+                                  dataTable[index][0],
+                                  dataTable[index][1],
+                                  dataTable[index][2],
+                                ],
+                              ),
+                              headerDecoration: const pw.BoxDecoration(
+                                color: PdfColors.white,
+                              ),
+                              rowDecoration: const pw.BoxDecoration(
+                                border: pw.Border(
+                                  bottom: pw.BorderSide(
+                                    color: PdfColors.black,
+                                    width: .5,
+                                  ),
+                                ),
+                              ),
+                              cellAlignment: pw.Alignment.centerRight,
+                              cellAlignments: {0: pw.Alignment.centerLeft},
+                            );
+                          },
+                        ),
+                      ); // Page
+
+                      final output = await getTemporaryDirectory();
+                      final file = File('${output.path}/example.pdf');
+                      await file.writeAsBytes(await pdf.save());
+                      print("@@@ path : ${file.path}");
+                      setState(() {
+
+                      });
+
+                      BixolonPlugin().printPDF(file.path);
+                    },
+                    child: const Text('pdf print'),
+                  ),
+                  FilledButton(
+                    onPressed: () async {
+                      final result = await FilePicker.platform.pickFiles(allowedExtensions: ['pdf'],type: FileType.custom);
+                      if (result == null) {
+                        return;
+                      }
+                      BixolonPlugin().printPDF(result.paths[0]!);
+                    },
+                    child: const Text('pdf picker'),
+                  ),
+                  FilledButton(
+                    onPressed: () async {
                       BixolonPlugin().dispose();
                     },
                     child: const Text('dispose'),
@@ -154,7 +233,14 @@ class _MyAppState extends State<MyApp> {
                 ],
               ),
               const SizedBox(height: 10),
-               RepaintBoundary(
+              SizedBox(
+                height: 200,
+                child: PdfViewer.openFile(
+                  '/var/mobile/Containers/Data/Application/D6EFBE0E-4268-4735-91BE-B6EEBE7B9B9B/Library/Caches/example.pdf',
+                ),
+              ),
+              const SizedBox(height: 10),
+              RepaintBoundary(
                 key: key,
                 child: Container(
                   color: Colors.white,

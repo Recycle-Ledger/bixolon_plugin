@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Request legacy Bluetooth permissions on older devices. -->
     <uses-permission android:name="android.permission.BLUETOOTH"
@@ -22,6 +23,7 @@
    <application
         android:label="bixolon_plugin_example"
         android:name="${applicationName}"
+        tools:node="replace"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
