@@ -121,7 +121,7 @@ class _MyAppState extends State<MyApp> {
                   FilledButton(
                     onPressed: () async {
                       final es = EscapeSequence();
-                      BixolonPlugin().printText('${es.normal}\n');
+                      /*BixolonPlugin().printText('${es.normal}\n');
                       BixolonPlugin().printText('${es.doubleHighAndWide}${es.bold}${es.center}수집 확인서\n\n\n');
                       BixolonPlugin().printText('${es.normal}${es.spaceBetween('대    상 :', '폐식용유')}\n');
                       BixolonPlugin().printText('${es.normal}${es.spaceBetween('수    량 :', '20 캔')}\n');
@@ -140,7 +140,47 @@ class _MyAppState extends State<MyApp> {
                       BixolonPlugin().printText('${es.normal}\n\n');
                       BixolonPlugin().printText('${es.normal}${es.doubleWide}서명\n\n');
                       BixolonPlugin().printImage(await widgetToByteArray());
+                      BixolonPlugin().printText('${es.normal}\n\n');*/
+
                       BixolonPlugin().printText('${es.normal}\n\n');
+                      BixolonPlugin().printText('${es.doubleHighAndWide}${es.bold}${es.center}영수증\n\n\n');
+                      BixolonPlugin().printText('${es.normal}${es.bold}[구 매 처]\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('상ㅤㅤ호 :', '삼보식당')}\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('담 당 자 :', '페드로')}\n');
+                      BixolonPlugin().printText('${es.normal}${CommonSymbol.dash}\n');
+                      BixolonPlugin().printText('${es.normal}${es.bold}[공 급 처]\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('상ㅤㅤ호 :', '다둥유통')}\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('담 당 자 :', '황미남')}\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('사업자등록번호 : ', '686-74-00386')}\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('주ㅤㅤ소 :', '충청남도 아산시 배방읍 모산로 52')}\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('업태 : 도소매', '종목 : 식용유')}\n');
+                      BixolonPlugin().printText('${es.normal}\n');
+                      BixolonPlugin().printText('${es.normal}${CommonSymbol.stroke}\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('품목    수량    단가', '공급대가')}\n');
+                      BixolonPlugin().printText('${es.normal}${CommonSymbol.stroke}\n');
+                      BixolonPlugin().printText('${es.normal}${es.autoLineBreak(rawString: '식용유', limitByte: 8)} ${'3'.padLeft(3)}${'58,000'.padLeft(8)}${'174,000'.padLeft(12)}\n');
+                      BixolonPlugin().printText('${es.normal}${es.autoLineBreak(rawString: '폐식용용용용유', limitByte: 8)} ${'5'.padLeft(3)}${'-4,000'.padLeft(8)}${'-20,000'.padLeft(12)}\n');
+                      BixolonPlugin().printText('${es.normal}\n');
+                      BixolonPlugin().printText('${es.normal}${CommonSymbol.dash}\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('금일합계 :', '154,000')}\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('미 수 금 :', '333,000')}\n');
+                      BixolonPlugin().printText('${es.normal}\n');
+                      BixolonPlugin().printText('${es.doubleHigh}${es.spaceBetween('총 합 계 :', '487,000')}\n');
+                      BixolonPlugin().printText('${es.normal}\n');
+                      BixolonPlugin().printText('${es.normal}${es.center}위 금액을 정히 영수(청구)함\n');
+                      BixolonPlugin().printText('${es.normal}${es.center}2023년 12월 12일\n');
+                      BixolonPlugin().printText('${es.normal}\n');
+                      BixolonPlugin().printText('${es.normal}${CommonSymbol.doubleDash}\n');
+                      BixolonPlugin().printText('${es.normal}${es.bold}[계좌번호]\n');
+                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('농협은행', '356-0711-2177-73 황미남')}\n');
+                      BixolonPlugin().printText('${es.normal}\n\n\n');
+
+                      // BixolonPlugin().printText('${es.normal}${es.center}상기 폐식용유를 수집하였음\n');
+                      // BixolonPlugin().printText('${es.normal}${es.center}2023년 5월 3일\n\n');
+                      // BixolonPlugin().printText('${es.normal}\n\n');
+                      // BixolonPlugin().printText('${es.normal}${es.doubleWide}서명\n\n');
+                      // BixolonPlugin().printImage(await widgetToByteArray());
+                      // BixolonPlugin().printText('${es.normal}\n\n');
                     },
                     child: const Text('text print'),
                   ),
