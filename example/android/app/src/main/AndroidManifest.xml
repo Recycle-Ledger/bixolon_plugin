@@ -23,7 +23,6 @@
    <application
         android:label="bixolon_plugin_example"
         android:name="${applicationName}"
-        tools:node="replace"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
