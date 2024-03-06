@@ -1,13 +1,10 @@
 import 'dart:io';
 
 import 'package:bixolon_plugin/bixolon_plugin.dart';
-import 'package:bixolon_plugin/bluetooth_device.dart';
-import 'package:bixolon_plugin/escape_sequence.dart';
-import 'package:bixolon_plugin/common_symbol.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'dart:async';
@@ -89,7 +86,7 @@ class _MyAppState extends State<MyApp> {
                   FilledButton(
                     onPressed: () async {
                       try {
-                        BixolonPlugin().init();
+                        BixolonPrinter().init();
                       } catch (error, stackTrace) {}
                     },
                     child: const Text('init'),
@@ -97,7 +94,7 @@ class _MyAppState extends State<MyApp> {
                   FilledButton(
                     onPressed: () async {
                       try {
-                        await BixolonPlugin().deviceEnableSetting();
+                        await BixolonPrinter().deviceEnableSetting();
                         setState(() {
                           stateText = '프린트 준비가 완료되었습니다.';
                         });
@@ -111,7 +108,7 @@ class _MyAppState extends State<MyApp> {
                   ),
                   FilledButton(
                     onPressed: () async {
-                      List<BluetoothDevice> deviceList = await BixolonPlugin().getPairedDevices();
+                      List<BluetoothDevice> deviceList = await BixolonPrinter().getPairedDevices();
                       setState(() {
                         pairedDeviceList = deviceList;
                       });
@@ -120,73 +117,74 @@ class _MyAppState extends State<MyApp> {
                   ),
                   FilledButton(
                     onPressed: () async {
-                      final es = EscapeSequence();
-                      /*BixolonPlugin().printText('${es.normal}\n');
-                      BixolonPlugin().printText('${es.doubleHighAndWide}${es.bold}${es.center}수집 확인서\n\n\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('대    상 :', '폐식용유')}\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('수    량 :', '20 캔')}\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('금    액 :', '675,000 원')}\n\n\n');
-                      BixolonPlugin().printText('${es.normal}${es.center}상기 폐식용유를 수집하였음\n');
-                      BixolonPlugin().printText('${es.normal}${es.center}2023년 5월 3일\n\n');
-                      BixolonPlugin().printText('${es.normal}${CommonSymbol.stroke}\n\n');
-                      BixolonPlugin().printText('${es.normal}${es.doubleWide}배출처\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('상    호 :', '까치울초')}\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('담 당 자 :', '김까치')}\n\n');
-                      BixolonPlugin().printText('${es.normal}${es.doubleWide}수집처\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('상    호 :', '(주) 에코그린')}\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('대표이사 :', '서 성 희')}\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('주    소 :', '군포시 당정로 83')}\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('담 당 자 :', '정 재 우')}\n');
-                      BixolonPlugin().printText('${es.normal}\n\n');
-                      BixolonPlugin().printText('${es.normal}${es.doubleWide}서명\n\n');
-                      BixolonPlugin().printImage(await widgetToByteArray());
-                      BixolonPlugin().printText('${es.normal}\n\n');*/
+                      final PrintOption po = PrintOption();
+                      BixolonPrinter().printText('${po.doubleHighAndWide}${po.bold}${po.center}영수증\n\n\n');
+                      /*BixolonPrinter().printText('${es.normal}\n');
+                      BixolonPrinter().printText('${es.doubleHighAndWide}${es.bold}${es.center}수집 확인서\n\n\n');
+                      BixolonPrinter().printText('${es.normal}${es.spaceBetween('대    상 :', '폐식용유')}\n');
+                      BixolonPrinter().printText('${es.normal}${es.spaceBetween('수    량 :', '20 캔')}\n');
+                      BixolonPrinter().printText('${es.normal}${es.spaceBetween('금    액 :', '675,000 원')}\n\n\n');
+                      BixolonPrinter().printText('${es.normal}${es.center}상기 폐식용유를 수집하였음\n');
+                      BixolonPrinter().printText('${es.normal}${es.center}2023년 5월 3일\n\n');
+                      BixolonPrinter().printText('${es.normal}${CommonSymbol.stroke}\n\n');
+                      BixolonPrinter().printText('${es.normal}${es.doubleWide}배출처\n');
+                      BixolonPrinter().printText('${es.normal}${es.spaceBetween('상    호 :', '까치울초')}\n');
+                      BixolonPrinter().printText('${es.normal}${es.spaceBetween('담 당 자 :', '김까치')}\n\n');
+                      BixolonPrinter().printText('${es.normal}${es.doubleWide}수집처\n');
+                      BixolonPrinter().printText('${es.normal}${es.spaceBetween('상    호 :', '(주) 에코그린')}\n');
+                      BixolonPrinter().printText('${es.normal}${es.spaceBetween('대표이사 :', '서 성 희')}\n');
+                      BixolonPrinter().printText('${es.normal}${es.spaceBetween('주    소 :', '군포시 당정로 83')}\n');
+                      BixolonPrinter().printText('${es.normal}${es.spaceBetween('담 당 자 :', '정 재 우')}\n');
+                      BixolonPrinter().printText('${es.normal}\n\n');
+                      BixolonPrinter().printText('${es.normal}${es.doubleWide}서명\n\n');
+                      BixolonPrinter().printImage(await widgetToByteArray());
+                      BixolonPrinter().printText('${es.normal}\n\n');*/
 
-                      BixolonPlugin().printText('${es.normal}\n\n');
-                      BixolonPlugin().printText('${es.doubleHighAndWide}${es.bold}${es.center}영수증\n\n\n');
-                      BixolonPlugin().printText('${es.normal}${es.bold}[구 매 처]\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('상ㅤㅤ호 :', '삼보식당')}\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('담 당 자 :', '페드로')}\n');
-                      BixolonPlugin().printText('${es.normal}${CommonSymbol.dash}\n');
-                      BixolonPlugin().printText('${es.normal}${es.bold}[공 급 처]\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('상ㅤㅤ호 :', '다둥유통')}\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('담 당 자 :', '황미남')}\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('사업자등록번호 : ', '686-74-00386')}\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('주ㅤㅤ소 :', '충청남도 아산시 배방읍 모산로 52')}\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('업태 : 도소매', '종목 : 식용유')}\n');
-                      BixolonPlugin().printText('${es.normal}\n');
-                      BixolonPlugin().printText('${es.normal}${CommonSymbol.stroke}\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('품목    수량    단가', '공급대가')}\n');
-                      BixolonPlugin().printText('${es.normal}${CommonSymbol.stroke}\n');
-                      BixolonPlugin().printText('${es.normal}${es.autoLineBreak(rawString: '식용유', limitByte: 8)} ${'3'.padLeft(3)}${'58,000'.padLeft(8)}${'174,000'.padLeft(12)}\n');
-                      BixolonPlugin().printText('${es.normal}${es.autoLineBreak(rawString: '폐식용용용용유', limitByte: 8)} ${'5'.padLeft(3)}${'-4,000'.padLeft(8)}${'-20,000'.padLeft(12)}\n');
-                      BixolonPlugin().printText('${es.normal}\n');
-                      BixolonPlugin().printText('${es.normal}${CommonSymbol.dash}\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('금일합계 :', '154,000')}\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('미 수 금 :', '333,000')}\n');
-                      BixolonPlugin().printText('${es.normal}\n');
-                      BixolonPlugin().printText('${es.doubleHigh}${es.spaceBetween('총 합 계 :', '487,000')}\n');
-                      BixolonPlugin().printText('${es.normal}\n');
-                      BixolonPlugin().printText('${es.normal}${es.center}위 금액을 정히 영수(청구)함\n');
-                      BixolonPlugin().printText('${es.normal}${es.center}2023년 12월 12일\n');
-                      BixolonPlugin().printText('${es.normal}\n');
-                      BixolonPlugin().printText('${es.normal}${CommonSymbol.doubleDash}\n');
-                      BixolonPlugin().printText('${es.normal}${es.bold}[계좌번호]\n');
-                      BixolonPlugin().printText('${es.normal}${es.spaceBetween('농협은행', '356-0711-2177-73 황미남')}\n');
-                      BixolonPlugin().printText('${es.normal}\n\n\n');
+                      BixolonPrinter().printText('${po.normal}\n\n');
+                      BixolonPrinter().printText('${po.doubleHighAndWide}${po.bold}${po.center}영수증\n\n\n');
+                      BixolonPrinter().printText('${po.normal}${po.bold}[구 매 처]\n');
+                      BixolonPrinter().printText('${po.normal}${po.spaceBetween('상ㅤㅤ호 :', '삼보식당')}\n');
+                      BixolonPrinter().printText('${po.normal}${po.spaceBetween('담 당 자 :', '페드로')}\n');
+                      BixolonPrinter().printText('${po.normal}${po.dash}\n');
+                      BixolonPrinter().printText('${po.normal}${po.bold}[공 급 처]\n');
+                      BixolonPrinter().printText('${po.normal}${po.spaceBetween('상ㅤㅤ호 :', '다둥유통')}\n');
+                      BixolonPrinter().printText('${po.normal}${po.spaceBetween('담 당 자 :', '황미남')}\n');
+                      BixolonPrinter().printText('${po.normal}${po.spaceBetween('사업자등록번호 : ', '686-74-00386')}\n');
+                      BixolonPrinter().printText('${po.normal}${po.spaceBetween('주ㅤㅤ소 :', '충청남도 아산시 배방읍 모산로 52')}\n');
+                      BixolonPrinter().printText('${po.normal}${po.spaceBetween('업태 : 도소매', '종목 : 식용유')}\n');
+                      BixolonPrinter().printText('${po.normal}\n');
+                      BixolonPrinter().printText('${po.normal}${po.stroke}\n');
+                      BixolonPrinter().printText('${po.normal}${po.spaceBetween('품목    수량    단가', '공급대가')}\n');
+                      BixolonPrinter().printText('${po.normal}${po.stroke}\n');
+                      BixolonPrinter().printText('${po.normal}${po.autoLineBreak(rawString: '식용유', limitByte: 8)} ${'3'.padLeft(3)}${'58,000'.padLeft(8)}${'174,000'.padLeft(12)}\n');
+                      BixolonPrinter().printText('${po.normal}${po.autoLineBreak(rawString: '폐식용용용용유', limitByte: 8)} ${'5'.padLeft(3)}${'-4,000'.padLeft(8)}${'-20,000'.padLeft(12)}\n');
+                      BixolonPrinter().printText('${po.normal}\n');
+                      BixolonPrinter().printText('${po.normal}${po.dash}\n');
+                      BixolonPrinter().printText('${po.normal}${po.spaceBetween('금일합계 :', '154,000')}\n');
+                      BixolonPrinter().printText('${po.normal}${po.spaceBetween('미 수 금 :', '333,000')}\n');
+                      BixolonPrinter().printText('${po.normal}\n');
+                      BixolonPrinter().printText('${po.doubleHigh}${po.spaceBetween('총 합 계 :', '487,000')}\n');
+                      BixolonPrinter().printText('${po.normal}\n');
+                      BixolonPrinter().printText('${po.normal}${po.center}위 금액을 정히 영수(청구)함\n');
+                      BixolonPrinter().printText('${po.normal}${po.center}2023년 12월 12일\n');
+                      BixolonPrinter().printText('${po.normal}\n');
+                      BixolonPrinter().printText('${po.normal}${po.doubleDash}\n');
+                      BixolonPrinter().printText('${po.normal}${po.bold}[계좌번호]\n');
+                      BixolonPrinter().printText('${po.normal}${po.spaceBetween('농협은행', '356-0711-2177-73 황미남')}\n');
+                      BixolonPrinter().printText('${po.normal}\n\n\n');
 
-                      // BixolonPlugin().printText('${es.normal}${es.center}상기 폐식용유를 수집하였음\n');
-                      // BixolonPlugin().printText('${es.normal}${es.center}2023년 5월 3일\n\n');
-                      // BixolonPlugin().printText('${es.normal}\n\n');
-                      // BixolonPlugin().printText('${es.normal}${es.doubleWide}서명\n\n');
-                      // BixolonPlugin().printImage(await widgetToByteArray());
-                      // BixolonPlugin().printText('${es.normal}\n\n');
+                      // BixolonPrinter().printText('${es.normal}${es.center}상기 폐식용유를 수집하였음\n');
+                      // BixolonPrinter().printText('${es.normal}${es.center}2023년 5월 3일\n\n');
+                      // BixolonPrinter().printText('${es.normal}\n\n');
+                      // BixolonPrinter().printText('${es.normal}${es.doubleWide}서명\n\n');
+                      // BixolonPrinter().printImage(await widgetToByteArray());
+                      // BixolonPrinter().printText('${es.normal}\n\n');
                     },
                     child: const Text('text print'),
                   ),
                   FilledButton(
                     onPressed: () async {
-                      BixolonPlugin().printImage(await widgetToByteArray());
+                      BixolonPrinter().printImage(await widgetToByteArray());
                     },
                     child: const Text('png print'),
                   ),
@@ -250,7 +248,7 @@ class _MyAppState extends State<MyApp> {
 
                       });
 
-                      BixolonPlugin().printPDF(file.path);
+                      BixolonPrinter().printPDF(file.path);
                     },
                     child: const Text('pdf print'),
                   ),
@@ -260,13 +258,13 @@ class _MyAppState extends State<MyApp> {
                       if (result == null) {
                         return;
                       }
-                      BixolonPlugin().printPDF(result.paths[0]!);
+                      BixolonPrinter().printPDF(result.paths[0]!);
                     },
                     child: const Text('pdf picker'),
                   ),
                   FilledButton(
                     onPressed: () async {
-                      BixolonPlugin().dispose();
+                      BixolonPrinter().dispose();
                     },
                     child: const Text('dispose'),
                   ),
@@ -311,9 +309,9 @@ class _MyAppState extends State<MyApp> {
                         ),
                         onTap: () async {
                           if (Platform.isAndroid) {
-                            BixolonPlugin().selectPrinter(pairedDeviceList[index].macAddress);
+                            BixolonPrinter().selectPrinter(pairedDeviceList[index].macAddress);
                           } else {
-                            BixolonPlugin().selectPrinter(pairedDeviceList[index].logicalName);
+                            BixolonPrinter().selectPrinter(pairedDeviceList[index].logicalName);
                           }
                         },
                       );

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:bixolon_plugin/bixolon_plugin.dart';
+import 'package:bixolon_plugin/src/bixolon_plugin.dart';
 import 'package:bixolon_plugin/bixolon_plugin_platform_interface.dart';
 import 'package:bixolon_plugin/bixolon_plugin_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';

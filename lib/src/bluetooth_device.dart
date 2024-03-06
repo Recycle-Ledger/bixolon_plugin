@@ -2,7 +2,6 @@ class BluetoothDevice {
   final String logicalName;
   final String macAddress;
 
-//<editor-fold desc="Data Methods">
   const BluetoothDevice({
     required this.logicalName,
     required this.macAddress,
@@ -21,7 +20,7 @@ class BluetoothDevice {
 
   @override
   String toString() {
-    return 'BluetoothDevice{' + ' logicalName: $logicalName,' + ' macAddress: $macAddress,' + '}';
+    return 'BluetoothDevice{ logicalName: $logicalName, macAddress: $macAddress,}';
   }
 
   BluetoothDevice copyWith({
@@ -36,8 +35,8 @@ class BluetoothDevice {
 
   Map<String, dynamic> toMap() {
     return {
-      'logicalName': this.logicalName,
-      'macAddress': this.macAddress,
+      'logicalName': logicalName,
+      'macAddress': macAddress,
     };
   }
 
@@ -47,6 +46,4 @@ class BluetoothDevice {
       macAddress: map['macAddress'] as String,
     );
   }
-
-//</editor-fold>
 }

@@ -1,9 +1,19 @@
 import 'dart:convert';
 
-class EscapeSequence {
-  final String prefix = utf8.decode([0x1b, 0x7c]);
-  final int oneLineByte = 32;
+class PrintOption {
+  PrintOption({this.oneLineByte = 32});
 
+  final int oneLineByte;
+  final String _prefix = utf8.decode([0x1b, 0x7c]);
+
+  /// 하나로 이어진 실선
+  String get stroke => '─' * (oneLineByte ~/ 2);
+  /// -로 이루어진 점선
+  String get dash => '-' * oneLineByte;
+  /// =로 이루어진 점선
+  String get doubleDash => '=' * oneLineByte;
+
+  /// 입력받은 두 문자 사이에 공백문자를 넣어 양쪽맞춤정렬을 해준다.
   String spaceBetween(String prefix, String suffix) {
     int spaceByte = oneLineByte - _getByteSize(prefix + suffix);
     String space = '';
@@ -16,11 +26,11 @@ class EscapeSequence {
     return prefix + space + suffix;
   }
 
-  // 입력받은 문자열을 리미트바이트를 기준으로 자동개행을 해준다. (영문 숫자 1바이트 한글 2바이트)
-  // ex) rawString : 123123456, limitByte : 4
-  // 1231
-  // 2345
-  // 6
+  /// 입력받은 문자열을 리미트바이트를 기준으로 자동개행을 해준다. (영문 숫자 1바이트 한글 2바이트)
+  /// ex) rawString : 123123456, limitByte : 4
+  /// 1231
+  /// 2345
+  /// 6
   String autoLineBreak({required String rawString, required int limitByte}) {
     final int rawByte = _getByteSize(rawString);
     if (rawByte <= limitByte) {
@@ -35,7 +45,7 @@ class EscapeSequence {
     }
   }
 
-  // 입력받은 문자열을 입력한 바이트길이를 기준으로 2개의 단어로 분리해준다.
+  /// 입력받은 문자열을 입력한 바이트길이를 기준으로 2개의 단어로 분리해준다.
   ({String word1, String word2}) _splitStringByByte(String rawString, int byte) {
     final Runes inputRunes = rawString.runes;
     int currentByte = 0;
@@ -80,38 +90,38 @@ class EscapeSequence {
   }
 }
 
-extension Suffix on EscapeSequence {
-  String get normal => '${prefix}N';
-  String get fontA => '${prefix}aM';
-  String get fontB => '${prefix}bM';
-  String get fontC => '${prefix}cM';
-  String get leftJustify => '${prefix}lA';
-  String get center => '${prefix}cA';
-  String get rightJustify => '${prefix}rA';
-  String get bold => '${prefix}bC';
-  String get disabledBold => '$prefix!bC';
-  String get underline => '${prefix}uC';
-  String get disabledUnderline => '$prefix!uC';
-  String get reverseVideo => '${prefix}rvC';
-  String get disabledReverseVideo => '$prefix!rvC';
-  String get singleHighAndWide => '${prefix}1C';
-  String get doubleWide => '${prefix}2C';
-  String get doubleHigh => '${prefix}3C';
-  String get doubleHighAndWide => '${prefix}4C';
-  String get scale1Horizontally => '${prefix}1hC';
-  String get scale2Horizontally => '${prefix}2hC';
-  String get scale3Horizontally => '${prefix}3hC';
-  String get scale4Horizontally => '${prefix}4hC';
-  String get scale5Horizontally => '${prefix}5hC';
-  String get scale6Horizontally => '${prefix}6hC';
-  String get scale7Horizontally => '${prefix}7hC';
-  String get scale8Horizontally => '${prefix}8hC';
-  String get scale1Vertically => '${prefix}1vC';
-  String get scale2Vertically => '${prefix}2vC';
-  String get scale3Vertically => '${prefix}3vC';
-  String get scale4Vertically => '${prefix}4vC';
-  String get scale5Vertically => '${prefix}5vC';
-  String get scale6Vertically => '${prefix}6vC';
-  String get scale7Vertically => '${prefix}7vC';
-  String get scale8Vertically => '${prefix}8vC';
+extension OptionSuffix on PrintOption {
+  String get normal => '${_prefix}N';
+  String get fontA => '${_prefix}aM';
+  String get fontB => '${_prefix}bM';
+  String get fontC => '${_prefix}cM';
+  String get leftJustify => '${_prefix}lA';
+  String get center => '${_prefix}cA';
+  String get rightJustify => '${_prefix}rA';
+  String get bold => '${_prefix}bC';
+  String get disabledBold => '$_prefix!bC';
+  String get underline => '${_prefix}uC';
+  String get disabledUnderline => '$_prefix!uC';
+  String get reverseVideo => '${_prefix}rvC';
+  String get disabledReverseVideo => '$_prefix!rvC';
+  String get singleHighAndWide => '${_prefix}1C';
+  String get doubleWide => '${_prefix}2C';
+  String get doubleHigh => '${_prefix}3C';
+  String get doubleHighAndWide => '${_prefix}4C';
+  String get scale1Horizontally => '${_prefix}1hC';
+  String get scale2Horizontally => '${_prefix}2hC';
+  String get scale3Horizontally => '${_prefix}3hC';
+  String get scale4Horizontally => '${_prefix}4hC';
+  String get scale5Horizontally => '${_prefix}5hC';
+  String get scale6Horizontally => '${_prefix}6hC';
+  String get scale7Horizontally => '${_prefix}7hC';
+  String get scale8Horizontally => '${_prefix}8hC';
+  String get scale1Vertically => '${_prefix}1vC';
+  String get scale2Vertically => '${_prefix}2vC';
+  String get scale3Vertically => '${_prefix}3vC';
+  String get scale4Vertically => '${_prefix}4vC';
+  String get scale5Vertically => '${_prefix}5vC';
+  String get scale6Vertically => '${_prefix}6vC';
+  String get scale7Vertically => '${_prefix}7vC';
+  String get scale8Vertically => '${_prefix}8vC';
 }
