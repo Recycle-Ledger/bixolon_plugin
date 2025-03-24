@@ -153,17 +153,26 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun deviceEnableSetting(result: Result) {
         try {
-            posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")
-            // Device 정보에 포함 되어 있는 Port를 실제로 Open 하는 작업
-            posPrinter?.claim(5000)
-            // 장치 사용 여부
+            if (posPrinter == null) {
+                printerInit()
+            }
+            if (currentPrinter == null) {
+                result.error("101", "No printer selected", null)
+                return
+            }
+            posPrinter?.open(currentPrinter!!.logicalName)
+            posPrinter?.claim(5000) // 5초 타임아웃
             posPrinter?.deviceEnabled = true
-            result.success(null)
+            Log.d("BixolonPlugin", "Device enabled successfully")
+            result.success(true)
         } catch (e: JposException) {
+            Log.e("BixolonPlugin", "Device enable failed: ${e.errorCode}, ${e.message}")
+            // 디바이스 점유 해제 후 재시도
+            posPrinter?.release()
+            posPrinter?.close()
             result.error(e.errorCode.toString(), e.message, null)
         }
     }
-
     private fun dispose() {
         posPrinter?.release()
         posPrinter?.close()
@@ -172,16 +181,24 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun printText(text: String, result: Result) {
         try {
+            if (posPrinter == null || !posPrinter!!.deviceEnabled) {
+                deviceEnableSetting(result) // 활성화 시도
+                if (!posPrinter!!.deviceEnabled) {
+                    result.error("106", "The device is not enabled", null)
+                    return
+                }
+            }
             posPrinter?.printNormal(
-                POSPrinterConst.PTR_S_RECEIPT, // 고정값
+                POSPrinterConst.PTR_S_RECEIPT,
                 text,
             )
+            Log.d("BixolonPlugin", "Print successful: $text")
             result.success(true)
         } catch (e: JposException) {
+            Log.e("BixolonPlugin", "Print failed: ${e.errorCode}, ${e.message}")
             result.error(e.errorCode.toString(), e.message, null)
         }
     }
-
     fun resizeBitmap(bitmap: Bitmap): Bitmap {
         val width = bitmap.width
         val height = bitmap.height
