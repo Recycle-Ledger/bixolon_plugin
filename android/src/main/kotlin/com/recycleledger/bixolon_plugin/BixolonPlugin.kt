@@ -160,20 +160,33 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
                 result.error("101", "No printer selected", null)
                 return
             }
+
+            // 이전 상태 정리
+            try {
+                if (posPrinter?.claimed == true) {
+                    posPrinter?.release()
+                    Log.d("BixolonPlugin", "Released existing claim")
+                }
+                if (posPrinter?.opened == true) {
+                    posPrinter?.close()
+                    Log.d("BixolonPlugin", "Closed existing connection")
+                }
+            } catch (e: JposException) {
+                Log.w("BixolonPlugin", "Cleanup failed: ${e.message}")
+            }
+
             posPrinter?.open(currentPrinter!!.logicalName)
-            posPrinter?.claim(5000) // 5초 타임아웃
+            posPrinter?.claim(5000)
             posPrinter?.deviceEnabled = true
             Log.d("BixolonPlugin", "Device enabled successfully")
             result.success(true)
         } catch (e: JposException) {
             Log.e("BixolonPlugin", "Device enable failed: ${e.errorCode}, ${e.message}")
-            // 디바이스 점유 해제 후 재시도
             posPrinter?.release()
             posPrinter?.close()
             result.error(e.errorCode.toString(), e.message, null)
         }
-    }
-    private fun dispose() {
+    }    private fun dispose() {
         posPrinter?.release()
         posPrinter?.close()
         posPrinter?.deviceEnabled = false
