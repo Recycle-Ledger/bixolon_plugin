@@ -96,8 +96,8 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
         for (device in bondedDeviceSet) {
             pairedDeviceList.add(
                 BluetoothData(
-                    device.name,
-                    device.address,
+                    device.name ?! 'null',
+                    device.address ?! 'null',
                 )
             )
         }
