@@ -42,8 +42,8 @@ class BluetoothDevice {
 
   factory BluetoothDevice.fromMap(Map<String, dynamic> map) {
     return BluetoothDevice(
-      logicalName: map['logicalName'] as String,
-      macAddress: map['macAddress'] as String,
+      logicalName: map['logicalName'] as String? ?? 'null',
+      macAddress: map['macAddress'] as String? ?? 'null',
     );
   }
 }
