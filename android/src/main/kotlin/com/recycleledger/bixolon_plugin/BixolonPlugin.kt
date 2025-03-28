@@ -157,7 +157,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
             // Device 정보에 포함 되어 있는 Port를 실제로 Open 하는 작업
             posPrinter?.claim(5000)
             // 장치 사용 여부
-            posPrinter?.deviceEnabled = true
+            posPrinter?.deviceEnabled(true)
             result.success(null)
         } catch (e: JposException) {
             result.error(e.errorCode.toString(), e.message, null)
