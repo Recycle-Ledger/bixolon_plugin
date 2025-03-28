@@ -105,26 +105,30 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun connectPrinter(macAddress: String, result: Result) {
-        val selectDevice = pairedDeviceList.find { it.macAddress == macAddress }
-        if (selectDevice == null) {
-            result.error("0", "Not found device", null)
-            return
+        try {
+            val selectDevice = pairedDeviceList.find { it.macAddress == macAddress }
+            if (selectDevice == null) {
+                result.error("0", "Not found device", null)
+                return
+            }
+            if (bxlConfigLoader == null) {
+                bxlConfigLoader = BXLConfigLoader(context)
+            }
+            currentPrinter =
+            bxlConfigLoader?.removeAllEntries()
+            bxlConfigLoader?.newFile()
+            bxlConfigLoader?.addEntry(
+                selectDevice.logicalName,
+                BXLConfigLoader.DEVICE_CATEGORY_POS_PRINTER,
+                BXLConfigLoader.PRODUCT_NAME_SPP_R200III,
+                BXLConfigLoader.DEVICE_BUS_BLUETOOTH,
+                selectDevice.macAddress,
+            )
+            bxlConfigLoader?.saveFile()
+            result.success(true)
+        } catch (e: JposException) {
+            result.error(e)
         }
-        if (bxlConfigLoader == null) {
-            bxlConfigLoader = BXLConfigLoader(context)
-        }
-        currentPrinter = selectDevice
-        bxlConfigLoader?.removeAllEntries()
-        bxlConfigLoader?.newFile()
-        bxlConfigLoader?.addEntry(
-            selectDevice.logicalName,
-            BXLConfigLoader.DEVICE_CATEGORY_POS_PRINTER,
-            BXLConfigLoader.PRODUCT_NAME_SPP_R200III,
-            BXLConfigLoader.DEVICE_BUS_BLUETOOTH,
-            selectDevice.macAddress,
-        )
-        bxlConfigLoader?.saveFile()
-        result.success(true)
     }
 
     private fun checkConnection(result: Result) {
@@ -157,7 +161,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
             // Device 정보에 포함 되어 있는 Port를 실제로 Open 하는 작업
             posPrinter?.claim(5000)
             // 장치 사용 여부
-            posPrinter?.deviceEnabled = true
+            posPrinter?.setDeviceEnabled(true)
             result.success(null)
         } catch (e: JposException) {
             result.error(e.errorCode.toString(), e.message, null)
@@ -167,7 +171,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
     private fun dispose() {
         posPrinter?.release()
         posPrinter?.close()
-        posPrinter?.deviceEnabled = false
+        posPrinter?.setDeviceEnabled(false)
     }
 
     private fun printText(text: String, result: Result) {
