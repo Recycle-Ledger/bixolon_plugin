@@ -8,9 +8,9 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
+import android.util.Log
 import com.bxl.config.editor.BXLConfigLoader
 import com.google.gson.Gson
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -55,7 +55,8 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "bixolon_plugin")
         channel.setMethodCallHandler(this)
         context = flutterPluginBinding.applicationContext
-        bluetoothAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
+        bluetoothAdapter =
+            (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
@@ -64,12 +65,15 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
                 printerInit()
                 result.success(null)
             }
+
             "checkConnection" -> {
                 checkConnection(result)
             }
+
             "deviceEnableSetting" -> {
                 deviceEnableSetting(result)
             }
+
             "dispose" -> dispose()
             "pairedDevices" -> scanPairedDevices(result)
             "connectPrinter" -> connectPrinter(call.arguments as String, result)
@@ -80,6 +84,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
                     result.success(gson.toJson(currentPrinter))
                 }
             }
+
             "printText" -> printText(call.arguments as String, result)
             "printImage" -> printImage(call.arguments as ByteArray, result)
             "printPDF" -> printPDF(call.arguments as String, result)
@@ -113,7 +118,6 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
         if (bxlConfigLoader == null) {
             bxlConfigLoader = BXLConfigLoader(context)
         }
-        currentPrinter = selectDevice
         bxlConfigLoader?.removeAllEntries()
         bxlConfigLoader?.newFile()
         bxlConfigLoader?.addEntry(
@@ -123,6 +127,9 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
             BXLConfigLoader.DEVICE_BUS_BLUETOOTH,
             selectDevice.macAddress,
         )
+        Log.d("BixolonPlugin", "connectDevice: $selectDevice")
+        currentPrinter = selectDevice
+        Log.d("BixolonPlugin", "currentPrinter: $currentPrinter")
         bxlConfigLoader?.saveFile()
         result.success(true)
     }
@@ -153,12 +160,25 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun deviceEnableSetting(result: Result) {
         try {
-            posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")
+            val logicalName = currentPrinter?.logicalName
+            val macAddress = currentPrinter?.macAddress
+            Log.d("BixolonPlugin", "logicalName: $logicalName")
+            Log.d("BixolonPlugin", "address: $macAddress")
+            posPrinter?.open(logicalName ?: "SPP-R200III")
+            Log.d("BixolonPlugin", "Checking device state: ${posPrinter?.state}")
+            Log.d("BixolonPlugin", "Checking device claim status: ${posPrinter?.claimed}")
+
             // Device 정보에 포함 되어 있는 Port를 실제로 Open 하는 작업
             posPrinter?.claim(5000)
+            Log.d("BixolonPlugin", "1")
+
             // 장치 사용 여부
-            posPrinter?.deviceEnabled = true
+            posPrinter?.setDeviceEnabled(true)
+            Log.d("BixolonPlugin", "2")
+
             result.success(null)
+            Log.d("BixolonPlugin", "6")
+
         } catch (e: JposException) {
             result.error(e.errorCode.toString(), e.message, null)
         }

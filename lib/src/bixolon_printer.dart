@@ -5,10 +5,13 @@ import 'dart:convert';
 import 'package:bixolon_plugin/bixolon_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:talker/talker.dart';
 
 class BixolonPrinter {
   static const tag = 'bixolon_plugin';
   final platform = const MethodChannel('bixolon_plugin');
+
+  final talker = Talker();
 
   Future<void> init() async {
     debugPrint('$tag - init');
@@ -41,6 +44,7 @@ class BixolonPrinter {
     try {
       await platform.invokeMethod('deviceEnableSetting');
     } on PlatformException catch (error, stackTrace) {
+      talker.error(error.toString());
       return Future.error(error.message.toString(), stackTrace);
     }
   }
