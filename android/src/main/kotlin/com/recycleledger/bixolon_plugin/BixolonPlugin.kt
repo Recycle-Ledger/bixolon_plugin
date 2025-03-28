@@ -96,8 +96,8 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
         for (device in bondedDeviceSet) {
             pairedDeviceList.add(
                 BluetoothData(
-                    device.name,
-                    device.address,
+                    device.name ?! 'null',
+                    device.address ?! 'null',
                 )
             )
         }
@@ -157,13 +157,37 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun deviceEnableSetting(result: Result) {
         try {
-            posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")
-            // Device 정보에 포함 되어 있는 Port를 실제로 Open 하는 작업
+            if (posPrinter == null) {
+                printerInit()
+            }
+            if (currentPrinter == null) {
+                result.error("101", "No printer selected", null)
+                return
+            }
+
+            // 이전 상태 정리
+            try {
+                if (posPrinter?.claimed == true) {
+                    posPrinter?.release()
+                    Log.d("BixolonPlugin", "Released existing claim")
+                }
+                if (posPrinter?.opened == true) {
+                    posPrinter?.close()
+                    Log.d("BixolonPlugin", "Closed existing connection")
+                }
+            } catch (e: JposException) {
+                Log.w("BixolonPlugin", "Cleanup failed: ${e.message}")
+            }
+
+            posPrinter?.open(currentPrinter!!.logicalName)
             posPrinter?.claim(5000)
             // 장치 사용 여부
             posPrinter?.setDeviceEnabled(true)
             result.success(null)
         } catch (e: JposException) {
+            Log.e("BixolonPlugin", "Device enable failed: ${e.errorCode}, ${e.message}")
+            posPrinter?.release()
+            posPrinter?.close()
             result.error(e.errorCode.toString(), e.message, null)
         }
     }

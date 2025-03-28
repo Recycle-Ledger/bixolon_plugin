@@ -10,10 +10,10 @@ class BluetoothDevice {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is BluetoothDevice &&
-          runtimeType == other.runtimeType &&
-          logicalName == other.logicalName &&
-          macAddress == other.macAddress);
+          (other is BluetoothDevice &&
+              runtimeType == other.runtimeType &&
+              logicalName == other.logicalName &&
+              macAddress == other.macAddress);
 
   @override
   int get hashCode => logicalName.hashCode ^ macAddress.hashCode;
@@ -42,8 +42,8 @@ class BluetoothDevice {
 
   factory BluetoothDevice.fromMap(Map<String, dynamic> map) {
     return BluetoothDevice(
-      logicalName: map['logicalName'] as String,
-      macAddress: map['macAddress'] as String,
+      logicalName: map['logicalName'] as String? ?? 'null', // null이면 'null' 문자열
+      macAddress: map['macAddress'] as String? ?? 'null',   // null이면 'null' 문자열
     );
   }
 }
