@@ -153,6 +153,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun deviceEnableSetting(result: Result) {
         try {
+            posPrinter?.close()
             posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")
             // Device 정보에 포함 되어 있는 Port를 실제로 Open 하는 작업
             posPrinter?.claim(5000)
