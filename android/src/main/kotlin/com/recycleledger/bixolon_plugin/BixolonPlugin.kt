@@ -114,7 +114,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
             if (bxlConfigLoader == null) {
                 bxlConfigLoader = BXLConfigLoader(context)
             }
-            currentPrinter =
+            currentPrinter = selectDevice
             bxlConfigLoader?.removeAllEntries()
             bxlConfigLoader?.newFile()
             bxlConfigLoader?.addEntry(
