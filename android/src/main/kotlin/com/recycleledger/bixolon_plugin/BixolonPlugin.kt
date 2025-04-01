@@ -121,7 +121,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
         bxlConfigLoader?.removeAllEntries()
         bxlConfigLoader?.newFile()
         bxlConfigLoader?.addEntry(
-            "SPP-R200III",
+            selectDevice.logicalName,
             BXLConfigLoader.DEVICE_CATEGORY_POS_PRINTER,
             BXLConfigLoader.PRODUCT_NAME_SPP_R200III,
             BXLConfigLoader.DEVICE_BUS_BLUETOOTH,
@@ -164,8 +164,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
             Log.d("BixolonPlugin", "2")
             Log.d("BixolonPlugin", "logicalName: ${currentPrinter?.logicalName}")
             Log.d("BixolonPlugin", "address: ${currentPrinter?.macAddress}")
-            // posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")
-            posPrinter?.open("SPP-R200III")
+            posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")
             Log.d("BixolonPlugin", "3")
             Log.d("BixolonPlugin", "Checking device state: ${posPrinter?.state}")
 
