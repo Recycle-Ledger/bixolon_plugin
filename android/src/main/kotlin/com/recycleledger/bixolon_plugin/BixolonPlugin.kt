@@ -127,6 +127,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
             BXLConfigLoader.DEVICE_BUS_BLUETOOTH,
             selectDevice.macAddress,
         )
+        Log.d("BixolonPlugin", "connectDevice: $selectDevice")
         bxlConfigLoader?.saveFile()
         result.success(true)
     }
