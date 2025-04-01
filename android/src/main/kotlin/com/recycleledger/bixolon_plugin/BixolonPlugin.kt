@@ -129,6 +129,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
         )
         Log.d("BixolonPlugin", "connectDevice: $selectDevice")
         currentPrinter = selectDevice
+        Log.d("BixolonPlugin", "currentPrinter: $currentPrinter")
         bxlConfigLoader?.saveFile()
         result.success(true)
     }
