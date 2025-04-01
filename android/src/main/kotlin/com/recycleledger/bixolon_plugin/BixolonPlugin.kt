@@ -159,6 +159,8 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
         try {
             Log.d("BixolonPlugin", "1")
             Log.d("BixolonPlugin", "2")
+            Log.d("BixolonPlugin", "logicalName: ${currentPrinter?.logicalName}")
+            Log.d("BixolonPlugin", "address: ${currentPrinter?.macAddress}")
             posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")
             Log.d("BixolonPlugin", "3")
 
