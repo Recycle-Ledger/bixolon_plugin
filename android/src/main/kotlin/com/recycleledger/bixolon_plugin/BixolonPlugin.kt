@@ -156,7 +156,6 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
     private fun printerInit() {
         posPrinter = POSPrinter(context)
         addListener()
-        dispose()
     }
 
     private fun deviceEnableSetting(result: Result) {
