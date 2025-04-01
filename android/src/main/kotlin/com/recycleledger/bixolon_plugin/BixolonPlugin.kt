@@ -11,6 +11,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
+import android.util.Log
 import com.bxl.config.editor.BXLConfigLoader
 import com.google.gson.Gson
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -55,7 +56,8 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "bixolon_plugin")
         channel.setMethodCallHandler(this)
         context = flutterPluginBinding.applicationContext
-        bluetoothAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
+        bluetoothAdapter =
+            (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
@@ -64,12 +66,15 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
                 printerInit()
                 result.success(null)
             }
+
             "checkConnection" -> {
                 checkConnection(result)
             }
+
             "deviceEnableSetting" -> {
                 deviceEnableSetting(result)
             }
+
             "dispose" -> dispose()
             "pairedDevices" -> scanPairedDevices(result)
             "connectPrinter" -> connectPrinter(call.arguments as String, result)
@@ -80,6 +85,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
                     result.success(gson.toJson(currentPrinter))
                 }
             }
+
             "printText" -> printText(call.arguments as String, result)
             "printImage" -> printImage(call.arguments as ByteArray, result)
             "printPDF" -> printPDF(call.arguments as String, result)
@@ -152,22 +158,22 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun deviceEnableSetting(result: Result) {
         try {
-            debugPrint('1')
+            Log.d('1')
             posPrinter?.release()
-            debugPrint('2')
+            Log.d('2')
             posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")
-            debugPrint('3')
+            Log.d('3')
 
             // Device 정보에 포함 되어 있는 Port를 실제로 Open 하는 작업
             posPrinter?.claim(5000)
-            debugPrint('4')
+            Log.d('4')
 
             // 장치 사용 여부
             posPrinter?.setDeviceEnabled(true)
-            debugPrint('5')
+            Log.d('5')
 
             result.success(null)
-            debugPrint('6')
+            Log.d('6')
 
         } catch (e: JposException) {
             result.error(e.errorCode.toString(), e.message, null)
