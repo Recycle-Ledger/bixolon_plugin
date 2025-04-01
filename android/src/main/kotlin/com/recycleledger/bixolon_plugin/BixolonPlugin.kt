@@ -113,7 +113,6 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
         if (bxlConfigLoader == null) {
             bxlConfigLoader = BXLConfigLoader(context)
         }
-        currentPrinter = selectDevice
         bxlConfigLoader?.removeAllEntries()
         bxlConfigLoader?.newFile()
         bxlConfigLoader?.addEntry(
@@ -153,13 +152,23 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun deviceEnableSetting(result: Result) {
         try {
+            debugPrint('1')
             posPrinter?.release()
+            debugPrint('2')
             posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")
+            debugPrint('3')
+
             // Device 정보에 포함 되어 있는 Port를 실제로 Open 하는 작업
             posPrinter?.claim(5000)
+            debugPrint('4')
+
             // 장치 사용 여부
             posPrinter?.setDeviceEnabled(true)
+            debugPrint('5')
+
             result.success(null)
+            debugPrint('6')
+
         } catch (e: JposException) {
             result.error(e.errorCode.toString(), e.message, null)
         }
