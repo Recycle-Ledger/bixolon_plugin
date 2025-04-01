@@ -128,6 +128,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
             selectDevice.macAddress,
         )
         Log.d("BixolonPlugin", "connectDevice: $selectDevice")
+        currentPrinter = selectDevice
         bxlConfigLoader?.saveFile()
         result.success(true)
     }
