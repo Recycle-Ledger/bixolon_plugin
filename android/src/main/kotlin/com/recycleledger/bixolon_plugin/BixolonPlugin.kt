@@ -160,22 +160,21 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun deviceEnableSetting(result: Result) {
         try {
-            Log.d("BixolonPlugin", "1")
-            Log.d("BixolonPlugin", "2")
-            Log.d("BixolonPlugin", "logicalName: ${currentPrinter?.logicalName}")
-            Log.d("BixolonPlugin", "address: ${currentPrinter?.macAddress}")
-            posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")
-            Log.d("BixolonPlugin", "3")
+            val logicalName = currentPrinter?.logicalName
+            val macAddress = currentPrinter?.macAddress
+            Log.d("BixolonPlugin", "logicalName: $logicalName")
+            Log.d("BixolonPlugin", "address: $macAddress")
+            posPrinter?.open(logicalName ?: "SPP-R200III")
             Log.d("BixolonPlugin", "Checking device state: ${posPrinter?.state}")
             Log.d("BixolonPlugin", "Checking device claim status: ${posPrinter?.claimed}")
 
             // Device 정보에 포함 되어 있는 Port를 실제로 Open 하는 작업
             posPrinter?.claim(5000)
-            Log.d("BixolonPlugin", "4")
+            Log.d("BixolonPlugin", "1")
 
             // 장치 사용 여부
             posPrinter?.setDeviceEnabled(true)
-            Log.d("BixolonPlugin", "5")
+            Log.d("BixolonPlugin", "2")
 
             result.success(null)
             Log.d("BixolonPlugin", "6")
