@@ -158,22 +158,22 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun deviceEnableSetting(result: Result) {
         try {
-            Log.d('1')
+            Log.d("1")
             posPrinter?.release()
-            Log.d('2')
+            Log.d("2")
             posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")
-            Log.d('3')
+            Log.d("3")
 
             // Device 정보에 포함 되어 있는 Port를 실제로 Open 하는 작업
             posPrinter?.claim(5000)
-            Log.d('4')
+            Log.d("4")
 
             // 장치 사용 여부
             posPrinter?.setDeviceEnabled(true)
-            Log.d('5')
+            Log.d("5")
 
             result.success(null)
-            Log.d('6')
+            Log.d("6")
 
         } catch (e: JposException) {
             result.error(e.errorCode.toString(), e.message, null)
