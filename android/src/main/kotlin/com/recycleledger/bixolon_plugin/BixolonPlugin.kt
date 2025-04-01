@@ -164,7 +164,8 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
             Log.d("BixolonPlugin", "2")
             Log.d("BixolonPlugin", "logicalName: ${currentPrinter?.logicalName}")
             Log.d("BixolonPlugin", "address: ${currentPrinter?.macAddress}")
-            posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")
+            // posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")
+            posPrinter?.open("SPP-R200III")
             Log.d("BixolonPlugin", "3")
 
             // Device 정보에 포함 되어 있는 Port를 실제로 Open 하는 작업
