@@ -121,7 +121,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
         bxlConfigLoader?.removeAllEntries()
         bxlConfigLoader?.newFile()
         bxlConfigLoader?.addEntry(
-            selectDevice.logicalName,
+            "SPP-R200III",
             BXLConfigLoader.DEVICE_CATEGORY_POS_PRINTER,
             BXLConfigLoader.PRODUCT_NAME_SPP_R200III,
             BXLConfigLoader.DEVICE_BUS_BLUETOOTH,
