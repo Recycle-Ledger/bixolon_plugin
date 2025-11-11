@@ -55,8 +55,8 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.google.code.gson:gson:2.10.1"
-    implementation files('libs/bixolon_printer_V2.1.9.jar')
-    implementation files('libs/libcommon_V1.2.0.jar')
+    implementation files('libs/bixolon_printer_V2.2.8.jar')
+    implementation files('libs/libcommon_V1.3.1.jar')
 }
 
 String aarPath = localMavenPath
