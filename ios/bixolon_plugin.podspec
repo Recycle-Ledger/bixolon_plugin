@@ -15,12 +15,13 @@ A new Flutter project.
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.platform = :ios, '9.0'
+  s.platform = :ios, '12.0'
 
   # Flutter.framework does not contain a i386 slice.
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
+  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386 arm64' }
+  s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386 arm64' }
   s.swift_version = '5.0'
   s.preserve_paths = 'frmBixolonUPOS.framework'
-  s.xcconfig = { 'OTHER_LDFLAGS' => '-framework frmBixolonUPOS' }
+  s.xcconfig = { 'OTHER_LDFLAGS' => '-framework frmBixolonUPOS', 'FRAMEWORK_SEARCH_PATHS' => '$(PODS_ROOT)/../../bixolon_plugin/ios' }
   s.vendored_frameworks = 'frmBixolonUPOS.framework'
 end
