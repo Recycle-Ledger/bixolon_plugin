@@ -41,9 +41,12 @@ class BluetoothDevice {
   }
 
   factory BluetoothDevice.fromMap(Map<String, dynamic> map) {
+    final macAddress = map['macAddress'] as String? ?? '';
     return BluetoothDevice(
-      logicalName: map['logicalName'] as String,
-      macAddress: map['macAddress'] as String,
+      // 일부 기기는 캐시된 이름이 없어 네이티브 쪽에서 logicalName이 null로 올 수 있다.
+      // 화면이 깨지지 않도록 주소를 대체 표시 이름으로 사용한다.
+      logicalName: map['logicalName'] as String? ?? macAddress,
+      macAddress: macAddress,
     );
   }
 }

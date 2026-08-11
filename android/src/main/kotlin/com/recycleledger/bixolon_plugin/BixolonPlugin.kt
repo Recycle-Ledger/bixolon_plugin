@@ -94,9 +94,11 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
         val bondedDeviceSet: Set<BluetoothDevice> = bluetoothAdapter.bondedDevices
         pairedDeviceList.clear()
         for (device in bondedDeviceSet) {
+            // device.name(getName())은 캐시된 이름이 없거나 권한 문제 등으로 null을 반환할 수 있다.
+            // null이면 Dart 쪽 파싱이 깨지므로 주소를 대체 표시 이름으로 사용한다.
             pairedDeviceList.add(
                 BluetoothData(
-                    device.name,
+                    device.name ?: device.address,
                     device.address,
                 )
             )
