@@ -70,7 +70,10 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
             "deviceEnableSetting" -> {
                 deviceEnableSetting(result)
             }
-            "dispose" -> dispose()
+            "dispose" -> {
+                dispose()
+                result.success(null)
+            }
             "pairedDevices" -> scanPairedDevices(result)
             "connectPrinter" -> connectPrinter(call.arguments as String, result)
             "currentPrinter" -> {
@@ -167,9 +170,20 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun dispose() {
-        posPrinter?.release()
-        posPrinter?.close()
-        posPrinter?.deviceEnabled = false
+        // release/close는 미연결(claim 전) 상태에서 JposException을 던질 수 있고,
+        // 체크 예외라 MethodChannel 핸들러가 잡아주지 않으므로 각각 무시한다.
+        try {
+            posPrinter?.deviceEnabled = false
+        } catch (e: JposException) {
+        }
+        try {
+            posPrinter?.release()
+        } catch (e: JposException) {
+        }
+        try {
+            posPrinter?.close()
+        } catch (e: JposException) {
+        }
     }
 
     private fun printText(text: String, result: Result) {
