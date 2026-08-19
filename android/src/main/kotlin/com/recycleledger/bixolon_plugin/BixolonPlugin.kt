@@ -8,6 +8,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
@@ -31,9 +33,19 @@ import jpos.events.StatusUpdateEvent
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
+import java.util.concurrent.Callable
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 /** BixolonPlugin */
 class BixolonPlugin : FlutterPlugin, MethodCallHandler {
+    companion object {
+        private const val DISPOSE_TIMEOUT_MS = 4000L
+        private const val DEVICE_ENABLE_TIMEOUT_MS = 8000L
+    }
+
     private val CHANNEL = "bixolon_plugin"
 
     private lateinit var channel: MethodChannel
@@ -49,6 +61,36 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
     var posPrinter: POSPrinter? = null
     var bxlConfigLoader: BXLConfigLoader? = null
     val msr: MSR = MSR()
+
+    // JavaPOS(posPrinter)의 open/claim/close 등은 내부적으로 Bluetooth 소켓 I/O를
+    // 동기적으로 수행한다. 특정 기기·펌웨어 조합에서는 이 호출이 예외를 던지지
+    // 않고 그냥 응답 없이 멈춰버리는 경우가 있어(Android BluetoothSocket 관련
+    // 고질적 문제), try/catch(JposException)만으로는 막을 수 없다. 이런 호출은
+    // 별도 스레드에서 실행하고 시간 내에 끝나지 않으면 호출자에게는 실패를
+    // 반환한다 — 멈춘 스레드 자체는 강제 종료할 수 없어 그대로 흘려보낸다.
+    private val ioExecutor = Executors.newCachedThreadPool()
+    private val mainHandler = Handler(Looper.getMainLooper())
+
+    private fun <T> runWithTimeout(
+        timeoutMs: Long,
+        block: () -> T,
+        onSuccess: (T) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        val future = ioExecutor.submit(Callable { block() })
+        ioExecutor.submit {
+            try {
+                val value = future.get(timeoutMs, TimeUnit.MILLISECONDS)
+                mainHandler.post { onSuccess(value) }
+            } catch (e: TimeoutException) {
+                mainHandler.post { onError(e) }
+            } catch (e: ExecutionException) {
+                mainHandler.post { onError(e.cause ?: e) }
+            } catch (e: Exception) {
+                mainHandler.post { onError(e) }
+            }
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
@@ -71,8 +113,7 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
                 deviceEnableSetting(result)
             }
             "dispose" -> {
-                dispose()
-                result.success(null)
+                disposeWithTimeout(result)
             }
             "pairedDevices" -> scanPairedDevices(result)
             "connectPrinter" -> connectPrinter(call.arguments as String, result)
@@ -157,16 +198,25 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun deviceEnableSetting(result: Result) {
-        try {
-            posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")
-            // Device 정보에 포함 되어 있는 Port를 실제로 Open 하는 작업
-            posPrinter?.claim(5000)
-            // 장치 사용 여부
-            posPrinter?.deviceEnabled = true
-            result.success(null)
-        } catch (e: JposException) {
-            result.error(e.errorCode.toString(), e.message, null)
-        }
+        runWithTimeout(
+            timeoutMs = DEVICE_ENABLE_TIMEOUT_MS,
+            block = {
+                posPrinter?.open(currentPrinter?.logicalName ?: "SPP-R200III")
+                // Device 정보에 포함 되어 있는 Port를 실제로 Open 하는 작업
+                posPrinter?.claim(5000)
+                // 장치 사용 여부
+                posPrinter?.deviceEnabled = true
+            },
+            onSuccess = { result.success(null) },
+            onError = { error ->
+                if (error is JposException) {
+                    result.error(error.errorCode.toString(), error.message, null)
+                } else {
+                    // open/claim이 예외 없이 응답 없는 상태로 멈춘 경우(타임아웃).
+                    result.error("TIMEOUT", "Printer device enable timed out", null)
+                }
+            },
+        )
     }
 
     private fun dispose() {
@@ -184,6 +234,19 @@ class BixolonPlugin : FlutterPlugin, MethodCallHandler {
             posPrinter?.close()
         } catch (e: JposException) {
         }
+    }
+
+    private fun disposeWithTimeout(result: Result) {
+        // dispose()는 원래도 모든 예외를 삼키고 항상 성공으로 취급했으므로,
+        // 타임아웃이 나도 동일하게 성공 응답을 보낸다 — 목적은 어차피 새로
+        // open/claim할 것이므로, 응답 없는 release/close를 기다리다 전체
+        // 연결 흐름이 멈추는 것을 막는 것이다.
+        runWithTimeout(
+            timeoutMs = DISPOSE_TIMEOUT_MS,
+            block = { dispose() },
+            onSuccess = { result.success(null) },
+            onError = { result.success(null) },
+        )
     }
 
     private fun printText(text: String, result: Result) {
